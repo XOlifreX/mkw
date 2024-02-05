@@ -1,7 +1,5 @@
 #include "CourseCheckpoints.hpp"
 
-#include "CourseMap.hpp"
-
 // --- EXTERN DECLARATIONS BEGIN ---
 
 extern "C" {
@@ -41,12 +39,11 @@ extern UNKNOWN_DATA(sInstance__Q26System13SystemManager);
 // --- EXTERN DECLARATIONS END ---
 
 // .rodata
-const u32 lbl_8088f8d0 = {0x00000000};
-const u32 lbl_8088f8d4[] = {0x3f800000};
-const u32 lbl_8088f8d8[] = {0x3f000000, 0x00000000};
-const u32 lbl_8088f8e0[] = {0x43300000, 0x00000000};
+extern "C" UNKNOWN_DATA(lbl_8088f8d0);
+REL_SYMBOL_AT(lbl_8088f8d0, 0x8088f8d0)
 
-#define float_zero ((const f32&)lbl_8088f8d0)
+extern "C" UNKNOWN_DATA(lbl_8088f8d4);
+REL_SYMBOL_AT(lbl_8088f8d4, 0x8088f8d4)
 
 // .data
 
@@ -57,29 +54,46 @@ namespace System {
 bool MapdataCheckPoint::checkSector(const LinkedCheckpoint& next,
                                     const EGG::Vector2f& p0,
                                     const EGG::Vector2f& p1) const {
-  if (-(next.p0diff.y) * p0.x + next.p0diff.x * p0.y < float_zero)
+  if (-(next.p0diff.y) * p0.x + next.p0diff.x * p0.y < 0.0f)
     return false;
 
-  if (next.p1diff.y * p1.x - next.p1diff.x * p1.y < float_zero)
+  if (next.p1diff.y * p1.x - next.p1diff.x * p1.y < 0.0f)
     return false;
 
   return true;
 }
+
+bool MapdataCheckPoint::checkDistanceRatio(const LinkedCheckpoint& next, 
+                                           const EGG::Vector2f& p0,
+                                           const EGG::Vector2f& p1, 
+                                           f32* distanceRatio) const {
+  float dot = EGG::Vector2f::dot(this->mDir, p1);
+  float dot2 = -EGG::Vector2f::dot(next.checkpoint->mDir, p0);
+  float ratio = (dot) / (dot + dot2);
+  
+  *distanceRatio = ratio;
+  
+  return (ratio >= 0.0f) && (ratio <= 1.0f);
+}
+
+MapdataCheckPoint::Completion MapdataCheckPoint::checkSectorAndDistanceRatio_(
+    const LinkedCheckpoint& next,
+    const EGG::Vector2f& p0,
+    const EGG::Vector2f& p1,
+    f32* distanceRatio) const
+{   
+    if (!this->checkSector(next, p0, p1))
+        return Completion_1;
+    
+    if (!this->checkDistanceRatio(next, p0, p1, distanceRatio))
+        return Completion_2;
+
+    return Completion_0;
+}
 } // namespace System
 
-// Symbol: unk_80510bf0
-// PAL: 0x80510bf0..0x80510c74
-MARK_BINARY_BLOB(unk_80510bf0, 0x80510bf0, 0x80510c74);
-asm UNKNOWN_FUNCTION(unk_80510bf0){
-#include "asm/80510bf0.s"
-}
-
-// Symbol: unk_80510c74
-// PAL: 0x80510c74..0x80510d7c
-MARK_BINARY_BLOB(unk_80510c74, 0x80510c74, 0x80510d7c);
-asm UNKNOWN_FUNCTION(unk_80510c74){
-#include "asm/80510c74.s"
-}
+const u32 lbl_8088f8d8[] = {0x3f000000, 0x00000000};
+const u32 lbl_8088f8e0[] = {0x43300000, 0x00000000};
 
 // Symbol: Checkpoint_getCompletion
 // PAL: 0x80510d7c..0x80510f18

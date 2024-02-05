@@ -28,6 +28,8 @@ struct Vector2f {
   inline Vector2f(float _x, float _y) : x(_x), y(_y) {}
   inline Vector2f() {}
 
+  static inline float dot(const Vector2f& v1, const Vector2f& v2) { return v1.x * v2.x + v1.y * v2.y; }
+
   // For now
   ~Vector2f();
 };

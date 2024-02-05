@@ -1,7 +1,6 @@
 #pragma once
 
 #include <rk_types.h>
-
 #include <decomp.h>
 
 #ifdef __cplusplus
@@ -44,3 +43,5 @@ UNKNOWN_FUNCTION(CheckpointHolder_computeMeanTotalDistance);
 #ifdef __cplusplus
 }
 #endif
+
+#include "CourseMap.hpp"
