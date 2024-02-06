@@ -10,11 +10,11 @@ extern "C" {
 // PAL: 0x80510b84..0x80510bf0
 UNKNOWN_FUNCTION(checkSector__Q26System17MapdataCheckPointCFRCQ26System16LinkedCheckpointRCQ23EGG8Vector2fRCQ23EGG8Vector2f);
 // PAL: 0x80510bf0..0x80510c74
-UNKNOWN_FUNCTION(unk_80510bf0);
+UNKNOWN_FUNCTION(checkDistanceRatio__Q26System17MapdataCheckPointCFRCQ26System16LinkedCheckpointRCQ23EGG8Vector2fRCQ23EGG8Vector2fPf);
 // PAL: 0x80510c74..0x80510d7c
-UNKNOWN_FUNCTION(unk_80510c74);
+UNKNOWN_FUNCTION(checkSectorAndDistanceRatio___Q26System17MapdataCheckPointCFRCQ26System16LinkedCheckpointRCQ23EGG8Vector2fRCQ23EGG8Vector2fPf);
 // PAL: 0x80510d7c..0x80510f18
-UNKNOWN_FUNCTION(Checkpoint_getCompletion);
+UNKNOWN_FUNCTION(checkSectorAndDistanceRatio__Q26System17MapdataCheckPointCFRCQ23EGG8Vector3fPf);
 // PAL: 0x80510f18..0x80510f58
 UNKNOWN_FUNCTION(unk_80510f18);
 // PAL: 0x80510f58..0x80511034

@@ -18,7 +18,7 @@ extern UNKNOWN_FUNCTION(_restgpr_22);
 // PAL: 0x800215dc
 extern UNKNOWN_FUNCTION(_restgpr_23);
 // PAL: 0x80229e14
-extern UNKNOWN_FUNCTION(Checkpoint_getCompletion);
+extern UNKNOWN_FUNCTION(checkSectorAndDistanceRatio__Q26System17MapdataCheckPointCFRCQ23EGG8Vector3fPf);
 // PAL: 0x80511110
 extern UNKNOWN_FUNCTION(KmpHolder_findNextCheckpointRec);
 // PAL: 0x80511ec8
@@ -67,8 +67,8 @@ bool MapdataCheckPoint::checkDistanceRatio(const LinkedCheckpoint& next,
                                            const EGG::Vector2f& p0,
                                            const EGG::Vector2f& p1, 
                                            f32* distanceRatio) const {
-  float dot = EGG::Vector2f::dot(this->mDir, p1);
-  float dot2 = -EGG::Vector2f::dot(next.checkpoint->mDir, p0);
+  float dot = this->mDir.dot(p1);
+  float dot2 = -(next.checkpoint->mDir.dot(p0));
   float ratio = (dot) / (dot + dot2);
   
   *distanceRatio = ratio;
@@ -90,17 +90,36 @@ MapdataCheckPoint::Completion MapdataCheckPoint::checkSectorAndDistanceRatio_(
 
     return Completion_0;
 }
+
+MapdataCheckPoint::Completion MapdataCheckPoint::checkSectorAndDistanceRatio(
+    const EGG::Vector3f& pos,
+    f32* distanceRatio) const
+{   
+    EGG::Vector2f temp1((this->mpData->right).x, (this->mpData->right).y);
+    temp1.y = pos.z - temp1.y;
+    temp1.x = pos.x - temp1.x;
+ 
+    bool isCompletion2 = false;
+    for (int i = 0; i < this->mNextCount; i++) {
+        EGG::Vector2f temp2((this->mNextPoints[i].checkpoint->mpData->left).x, (this->mNextPoints[i].checkpoint->mpData->left).y);
+        temp2.y = pos.z - temp2.y;
+        temp2.x = pos.x - temp2.x;
+
+        switch(this->checkSectorAndDistanceRatio_(this->mNextPoints[i], temp2, temp1, distanceRatio)) {
+            case Completion_0: 
+                return Completion_0;
+            case Completion_2: 
+                isCompletion2 = true;
+                break;
+        }
+    }
+
+    return isCompletion2 ? Completion_2 : Completion_1;
+}
 } // namespace System
 
 const u32 lbl_8088f8d8[] = {0x3f000000, 0x00000000};
 const u32 lbl_8088f8e0[] = {0x43300000, 0x00000000};
-
-// Symbol: Checkpoint_getCompletion
-// PAL: 0x80510d7c..0x80510f18
-MARK_BINARY_BLOB(Checkpoint_getCompletion, 0x80510d7c, 0x80510f18);
-asm UNKNOWN_FUNCTION(Checkpoint_getCompletion){
-#include "asm/80510d7c.s"
-}
 
 // Symbol: unk_80510f18
 // PAL: 0x80510f18..0x80510f58
